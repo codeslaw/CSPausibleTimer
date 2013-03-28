@@ -11,7 +11,7 @@
 {
     NSDate *cycleStartDate;
     NSTimeInterval remainingInterval;
-    BOOL hasPaused;
+    BOOL hasPausedThisCycle;
 }
 
 +(CSPausibleTimer *)timerWithTimeInterval:(NSTimeInterval)timeInterval target:(id)target selector:(SEL)selector userInfo:(id)userInfo repeats:(BOOL)repeats
@@ -33,7 +33,7 @@
     [self.timer invalidate];
     
     if(self.isPaused)
-    {
+    {   //If resuming from a pause, use partial remaining time interval
         self.timer = [NSTimer scheduledTimerWithTimeInterval:remainingInterval target:self selector:@selector(timerFired:) userInfo:self.userInfo repeats:self.repeats];
         
     } else {
@@ -52,7 +52,7 @@
     if(self.isPaused) return;
     
     self.isPaused = YES;
-    hasPaused = YES;
+    hasPausedThisCycle = YES;
     
     [self.timer invalidate];
     
@@ -73,16 +73,19 @@
     remainingInterval = self.timeInterval;
     cycleStartDate = [NSDate date];
     
-    if(hasPaused)
+    if(hasPausedThisCycle)
     {
         //current timer is running on remainingInterval
-        //start will simply reset the timer
-        hasPaused = NO;
         
-        [self.timer invalidate];
+        //reset pause flag for next cycle
+        hasPausedThisCycle = NO;
         
         if(self.repeats)
+        {   //need to set up a new timer with original timeInterval
+            [self.timer invalidate];
             [self start];
+        }
+
     }
 }
 
