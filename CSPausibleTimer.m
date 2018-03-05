@@ -5,7 +5,9 @@
 //  Copyright (c) 2013 Codeslaw. All rights reserved.
 //
 
+
 #import "CSPausibleTimer.h"
+
 
 @implementation CSPausibleTimer
 {
@@ -16,7 +18,6 @@
 
 +(CSPausibleTimer *)timerWithTimeInterval:(NSTimeInterval)timeInterval target:(id)target selector:(SEL)selector userInfo:(id)userInfo repeats:(BOOL)repeats
 {
-    
     CSPausibleTimer *new = [[CSPausibleTimer alloc] init];
     new.timeInterval = timeInterval;
     new.target = target;
@@ -29,14 +30,15 @@
 
 -(void)start
 {
-    
     [self.timer invalidate];
     
-    if(self.isPaused)
-    {   //If resuming from a pause, use partial remaining time interval
+    if(self.isPaused) {
+        
+        //If resuming from a pause, use partial remaining time interval
         self.timer = [NSTimer scheduledTimerWithTimeInterval:remainingInterval target:self selector:@selector(timerFired:) userInfo:self.userInfo repeats:self.repeats];
         
-    } else {
+    }else {
+        
         self.timer = [NSTimer scheduledTimerWithTimeInterval:self.timeInterval target:self selector:@selector(timerFired:) userInfo:self.userInfo repeats:self.repeats];
         
         remainingInterval = self.timeInterval;
@@ -44,7 +46,6 @@
     
     self.isPaused = NO;
     cycleStartDate = [NSDate date];
-    
 }
 
 -(void)pause
@@ -80,12 +81,12 @@
         //reset pause flag for next cycle
         hasPausedThisCycle = NO;
         
-        if(self.repeats)
-        {   //need to set up a new timer with original timeInterval
+        if(self.repeats) {
+            
+            //need to set up a new timer with original timeInterval
             [self.timer invalidate];
             [self start];
         }
-
     }
 }
 
@@ -101,3 +102,4 @@
 
 
 @end
+
